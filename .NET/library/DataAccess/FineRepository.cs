@@ -3,39 +3,43 @@ using OneBeyondApi.Model;
 
 namespace OneBeyondApi.DataAccess
 {
-    public class BookRepository : IBookRepository
+    public class FineRepository : IFineRepository
     {
-        public BookRepository()
+        public FineRepository()
         {
+
         }
-        public List<Book> GetBooks()
+
+        public List<Fine> GetFine()
         {
             using (var context = new LibraryContext())
             {
-                var list = context.Books
+                var list = context.Fines
+                    .Include(x => x.Borrower)
                     .ToList();
                 return list;
             }
         }
 
-
-        public Book? GetBookByName(string bookName)
+        public Fine? GetFineById(Guid id)
         {
             using (var context = new LibraryContext())
             {
-                return context.Books
-                    .Include(x => x.Author)
-                    .FirstOrDefault(x => x.Name.Contains(bookName));
+                return context.Fines
+                    .Include(x => x.Borrower)
+                    .FirstOrDefault(x => x.Id == id);
+
             }
         }
 
-        public Guid AddBook(Book book)
+
+        public Guid AddFines(Fine fine)
         {
             using (var context = new LibraryContext())
             {
-                context.Books.Add(book);
+                context.Fines.Add(fine);
                 context.SaveChanges();
-                return book.Id;
+                return fine.Id;
             }
         }
     }

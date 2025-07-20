@@ -56,7 +56,15 @@ namespace OneBeyondApi
                 EmailAddress = "liana@gmail.com"
             };
 
-            var bookOnLoanUntilToday = new BookStock {
+            var jonesMayer = new Borrower
+            {
+                Name = "Jones Mayer",
+                EmailAddress = "mayer@gmail.com"
+            };
+
+
+            var bookOnLoanUntilToday = new BookStock
+            {
                 Book = clayBook,
                 OnLoanTo = daveSmith,
                 LoanEndDate = DateTime.Now.Date
@@ -83,6 +91,50 @@ namespace OneBeyondApi
                 LoanEndDate = null
             };
 
+            var reservationAgileBookToday = new Reservation
+            {
+                Book = rustBook,
+                Borrower = jonesMayer,
+                IsActive = true,
+                ReservationDate = DateTime.Now.Date,
+            };
+
+            var reservationAgileBookNextDay = new Reservation
+            {
+                Book = rustBook,
+                Borrower = daveSmith,
+                IsActive = true,
+                ReservationDate = DateTime.Now.Date.AddDays(1),
+            };
+
+            var reservationAgileBookThreeDays = new Reservation
+            {
+                Book = rustBook,
+                Borrower = lianaJames,
+                IsActive = true,
+                ReservationDate = DateTime.Now.Date.AddDays(3),
+            };
+
+
+            var reservationNoActive = new Reservation
+            {
+                Book = clayBook,
+                Borrower = lianaJames,
+                IsActive = false,
+                ReservationDate = DateTime.Now.Date.AddMonths(-2),
+            };
+
+          
+
+
+            var PayFine = new Fine
+            {
+                Borrower = lianaJames,
+                Amount = 2.5m,
+                CreatedDate = DateTime.Now,
+            };
+
+
             using (var context = new LibraryContext())
             {
                 context.Authors.Add(ernestMonkjack);
@@ -96,11 +148,19 @@ namespace OneBeyondApi
 
                 context.Borrowers.Add(daveSmith);
                 context.Borrowers.Add(lianaJames);
+                context.Borrowers.Add(jonesMayer);
 
                 context.Catalogue.Add(bookOnLoanUntilToday);
                 context.Catalogue.Add(bookNotOnLoan);
                 context.Catalogue.Add(bookOnLoanUntilNextWeek);
                 context.Catalogue.Add(rustBookStock);
+
+                context.Reservations.Add(reservationAgileBookThreeDays);
+                context.Reservations.Add(reservationAgileBookToday);
+                context.Reservations.Add(reservationAgileBookNextDay);
+                context.Reservations.Add(reservationNoActive);
+
+                context.Fines.Add(PayFine);
 
                 context.SaveChanges();
 

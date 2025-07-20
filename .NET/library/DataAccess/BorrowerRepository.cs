@@ -26,5 +26,13 @@ namespace OneBeyondApi.DataAccess
                 return borrower.Id;
             }
         }
+
+        public Borrower? GetBorrowerByEmailAddress(string emailAddress)
+        {
+            using (var context = new LibraryContext())
+            {
+                return context.Borrowers.FirstOrDefault(email => email.EmailAddress.Contains(emailAddress));
+            }
+        }
     }
 }

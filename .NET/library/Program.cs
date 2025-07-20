@@ -1,5 +1,7 @@
 using OneBeyondApi;
 using OneBeyondApi.DataAccess;
+using OneBeyondApi.Service;
+using OneBeyondApi.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,11 @@ builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBorrowerRepository, BorrowerRepository>();
 builder.Services.AddScoped<ICatalogueRepository, CatalogueRepository>();
+builder.Services.AddScoped<IFineRepository, FineRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+builder.Services.AddScoped<ICatalogueService, CatalogueService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 // Seed test data into memory DB
 SeedData.SetInitialData();
@@ -22,8 +29,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
 app.UseHttpsRedirection();
