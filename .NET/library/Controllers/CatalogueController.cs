@@ -43,6 +43,11 @@ namespace OneBeyondApi.Controllers
             {
                 return Ok(_catalogueService.GetCatalogueOnLoan());
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation catalogue loan.");
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
 
@@ -60,7 +65,7 @@ namespace OneBeyondApi.Controllers
         /// <param name="returnedDate"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("CloseCatalogueLoan")]
+        [Route("CloseCatalogueLoan/{id}/{returnedDate}")]
         public ActionResult<BookStock> CloseCatalogueLoan(Guid id, DateTime returnedDate)
         {
             try
@@ -71,6 +76,11 @@ namespace OneBeyondApi.Controllers
                 }
 
                 return _catalogueService.CloseCatalogueLoan(id, returnedDate);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error loan.");
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

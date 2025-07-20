@@ -124,8 +124,6 @@ namespace OneBeyondApi
                 ReservationDate = DateTime.Now.Date.AddMonths(-2),
             };
 
-          
-
 
             var PayFine = new Fine
             {
@@ -160,7 +158,6 @@ namespace OneBeyondApi
                 context.Reservations.Add(reservationAgileBookNextDay);
                 context.Reservations.Add(reservationNoActive);
 
-                context.Fines.Add(PayFine);
 
                 context.SaveChanges();
 

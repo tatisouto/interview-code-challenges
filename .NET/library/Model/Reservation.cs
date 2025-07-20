@@ -2,7 +2,7 @@
 {
     public class Reservation
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Borrower Borrower { get; set; }
         public Book Book { get; set; }
         public DateTime ReservationDate { get; set; }

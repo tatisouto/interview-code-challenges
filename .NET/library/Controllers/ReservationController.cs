@@ -30,11 +30,15 @@ namespace OneBeyondApi.Controllers
             {
                 return Ok(_reservationService.GetReservations());
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error while reserving book.");
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving reservations.");
                 return StatusCode(500, "An error occurrer");
-
             }
 
         }
@@ -53,6 +57,11 @@ namespace OneBeyondApi.Controllers
 
                 return Ok(_reservationService.ReserveBook(bookName, email));
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error while reserving book.");
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error reserve book.");
@@ -69,7 +78,7 @@ namespace OneBeyondApi.Controllers
         /// <param name="borrowerId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetReserveAvailable")]
+        [Route("GetReserveAvailable/{bookId}/{borrowerId}")]
         public ActionResult<ReserveAvailableDto> GetReserveAvailable(Guid bookId, Guid borrowerId)
         {
             try
@@ -78,6 +87,11 @@ namespace OneBeyondApi.Controllers
                     return BadRequest("Invalid input parameters.");
 
                 return Ok(_reservationService.GetReserveAvailable(bookId, borrowerId));
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error while reserving book.");
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

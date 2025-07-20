@@ -33,6 +33,18 @@ namespace OneBeyondApi.DataAccess
         }
 
 
+        public Fine? GetFineBorrowerById(Guid borrowerId)
+        {
+            using (var context = new LibraryContext())
+            {
+                return context.Fines
+                    .Include(x => x.Borrower)
+                    .FirstOrDefault(x => x.Borrower.Id == borrowerId);
+
+            }
+        }
+
+
         public Guid AddFines(Fine fine)
         {
             using (var context = new LibraryContext())

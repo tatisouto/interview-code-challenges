@@ -52,15 +52,14 @@ namespace OneBeyondApi.Service
             var fine = new Fine
             {
                 Borrower = borrewer,
-                Amount = fineAmount,
-                CreatedDate = DateTime.UtcNow,
+                Amount = fineAmount
             };
 
             _fineRepository.AddFines(fine);
 
         }
 
-       
+
         public List<BookStock> GetCatalogue()
         {
             return _catalogueRepository.GetCatalogue();
