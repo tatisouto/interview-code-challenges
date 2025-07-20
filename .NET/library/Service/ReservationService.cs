@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OneBeyondApi.DataAccess;
+﻿using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
 using OneBeyondApi.Model.Dto;
 using OneBeyondApi.Service.Interface;
-using System.Collections.Generic;
-using System.Net;
 
 namespace OneBeyondApi.Service
 {
@@ -61,8 +58,7 @@ namespace OneBeyondApi.Service
             {
                 Book = book,
                 Borrower = borrower,
-                IsActive = true,
-                ReservationDate = DateTime.UtcNow.Date,
+                IsActive = true
             };
 
             return _reservationRepository.AddReservation(reservation);
@@ -96,7 +92,7 @@ namespace OneBeyondApi.Service
             {
                 int peopleAhead = position - 1;
 
-                DateTime estimatedDate = (catalogue.LoanEndDate?.Date ?? DateTime.UtcNow)
+                DateTime estimatedDate = (catalogue.LoanEndDate?.Date ?? DateTime.Now.Date)
                                          .AddDays(peopleAhead * AVG_LOAN_DAYS);
 
                 return new ReserveAvailableDto

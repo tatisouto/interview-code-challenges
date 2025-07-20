@@ -62,6 +62,12 @@ namespace OneBeyondApi
                 EmailAddress = "mayer@gmail.com"
             };
 
+            var MikeJagger = new Borrower
+            {
+                Name = "Mike Jagger",
+                EmailAddress = "jagger@gmail.com"
+            };
+
 
             var bookOnLoanUntilToday = new BookStock
             {
@@ -99,37 +105,13 @@ namespace OneBeyondApi
                 ReservationDate = DateTime.Now.Date,
             };
 
-            var reservationAgileBookNextDay = new Reservation
-            {
-                Book = rustBook,
-                Borrower = daveSmith,
-                IsActive = true,
-                ReservationDate = DateTime.Now.Date.AddDays(1),
-            };
-
-            var reservationAgileBookThreeDays = new Reservation
-            {
-                Book = rustBook,
-                Borrower = lianaJames,
-                IsActive = true,
-                ReservationDate = DateTime.Now.Date.AddDays(3),
-            };
-
-
-            var reservationNoActive = new Reservation
-            {
-                Book = clayBook,
-                Borrower = lianaJames,
-                IsActive = false,
-                ReservationDate = DateTime.Now.Date.AddMonths(-2),
-            };
 
 
             var PayFine = new Fine
             {
                 Borrower = lianaJames,
                 Amount = 2.5m,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.Now.Date,
             };
 
 
@@ -147,16 +129,16 @@ namespace OneBeyondApi
                 context.Borrowers.Add(daveSmith);
                 context.Borrowers.Add(lianaJames);
                 context.Borrowers.Add(jonesMayer);
+                context.Borrowers.Add(MikeJagger);
 
                 context.Catalogue.Add(bookOnLoanUntilToday);
                 context.Catalogue.Add(bookNotOnLoan);
                 context.Catalogue.Add(bookOnLoanUntilNextWeek);
                 context.Catalogue.Add(rustBookStock);
 
-                context.Reservations.Add(reservationAgileBookThreeDays);
                 context.Reservations.Add(reservationAgileBookToday);
-                context.Reservations.Add(reservationAgileBookNextDay);
-                context.Reservations.Add(reservationNoActive);
+
+                context.Fines.Add(PayFine);
 
 
                 context.SaveChanges();

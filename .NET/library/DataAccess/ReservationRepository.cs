@@ -5,12 +5,16 @@ namespace OneBeyondApi.DataAccess
 {
     public class ReservationRepository : IReservationRepository
     {
+
         public ReservationRepository() { }
 
         public Guid AddReservation(Reservation reservation)
         {
             using (var context = new LibraryContext())
             {
+                context.Attach(reservation.Borrower);
+                context.Attach(reservation.Book);
+
                 context.Reservations.Add(reservation);
                 context.SaveChanges();
                 return reservation.Id;
@@ -45,7 +49,7 @@ namespace OneBeyondApi.DataAccess
 
         }
 
-        
+
 
     }
 }

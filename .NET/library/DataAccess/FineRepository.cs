@@ -49,6 +49,9 @@ namespace OneBeyondApi.DataAccess
         {
             using (var context = new LibraryContext())
             {
+
+                context.Attach(fine.Borrower);
+
                 context.Fines.Add(fine);
                 context.SaveChanges();
                 return fine.Id;

@@ -13,10 +13,10 @@ namespace OneBeyondApi.Controllers
     [ApiController]
     public class ReservationController : ControllerBase
     {
-        private readonly ILogger<CatalogueController> _logger;
+        private readonly ILogger<ReservationController> _logger;
         private readonly IReservationService _reservationService;
 
-        public ReservationController(ILogger<CatalogueController> logger, IReservationService reservationService)
+        public ReservationController(ILogger<ReservationController> logger, IReservationService reservationService)
         {
             _logger = logger;
             _reservationService = reservationService;
