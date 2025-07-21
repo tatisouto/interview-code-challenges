@@ -18,9 +18,19 @@ namespace OneBeyondTest.Mock
             return _fixture.Build<BookStockDto>().Create();
         }
 
-        public List<BookStockDto> getListBookStock()
+        public BookStock GetBookStock()
+        {
+            return _fixture.Build<BookStock>().Create();
+        }
+
+        public List<BookStockDto> GetListBookStockDto()
         {
             return _fixture.Build<BookStockDto>().CreateMany(3).ToList();
+        }
+
+        public List<BookStock> GetListBookStock()
+        {
+            return _fixture.Build<BookStock>().CreateMany(3).ToList();
         }
     }
 }

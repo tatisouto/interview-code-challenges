@@ -23,6 +23,11 @@ namespace OneBeyondTest.Mock
             return _fixture.Build<ReservationDto>().Create();
         }
 
+        public Reservation Reserve()
+        {
+            return _fixture.Build<Reservation>().Create();
+        }
+
         public List<ReservationDto> GetListReservationDto()
         {
             return _fixture.Build<ReservationDto>().CreateMany(3).ToList();
@@ -47,6 +52,11 @@ namespace OneBeyondTest.Mock
         public ReserveAvailableDto GetReserveAvailableDto()
         {
             return _fixture.Build<ReserveAvailableDto>().Create();
+        }
+
+        public ReserveAvailable GetReserveAvailable()
+        {
+            return _fixture.Build<ReserveAvailable>().Create();
         }
 
         public List<ReserveAvailableDto> GetListReserveAvailableDto()
