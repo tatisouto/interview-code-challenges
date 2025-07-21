@@ -1,51 +1,46 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OneBeyondApi.DataAccess.Context;
+using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 
-namespace OneBeyondApi.DataAccess
+namespace OneBeyondApi.DataAccess.Repository
 {
     public class FineRepository : IFineRepository
     {
-        public FineRepository()
-        {
 
-        }
-
-        public List<Fine> GetFine()
+        public async Task<IEnumerable<Fine>> GetFineAsync()
         {
             using (var context = new LibraryContext())
             {
-                var list = context.Fines
+                return await context.Fines
                     .Include(x => x.Borrower)
-                    .ToList();
-                return list;
+                    .ToListAsync();
             }
         }
 
-        public Fine? GetFineById(Guid id)
+        public async Task<Fine?> GetFineByIdAsync(Guid id)
         {
             using (var context = new LibraryContext())
             {
-                return context.Fines
+                return await context.Fines
                     .Include(x => x.Borrower)
-                    .FirstOrDefault(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
             }
         }
 
 
-        public Fine? GetFineBorrowerById(Guid borrowerId)
+        public async Task<Fine?> GetFineBorrowerByIdAsync(Guid borrowerId)
         {
             using (var context = new LibraryContext())
             {
-                return context.Fines
+                return await context.Fines
                     .Include(x => x.Borrower)
-                    .FirstOrDefault(x => x.Borrower.Id == borrowerId);
-
+                    .FirstOrDefaultAsync(x => x.Borrower.Id == borrowerId);
             }
         }
 
-
-        public Guid AddFines(Fine fine)
+        public async Task<Guid> AddFineAsync(Fine fine)
         {
             using (var context = new LibraryContext())
             {
@@ -53,7 +48,7 @@ namespace OneBeyondApi.DataAccess
                 context.Attach(fine.Borrower);
 
                 context.Fines.Add(fine);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return fine.Id;
             }
         }

@@ -1,4 +1,4 @@
-﻿using OneBeyondApi.DataAccess;
+﻿using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 using OneBeyondApi.Service.Interface;
 
@@ -20,9 +20,9 @@ namespace OneBeyondApi.Service
         /// Updates the loan end date for a specific catalogue item and applies a fine if the returned date exceeds the
         /// original loan end date.
         /// </summary>        
-        public BookStock CloseCatalogueLoan(Guid id, DateTime returnedDate)
+        public async Task<BookStock> CloseCatalogueLoanAsync(Guid id, DateTime returnedDate)
         {
-            var catalogue = _catalogueRepository.GetCatalogueById(id);
+            var catalogue = await _catalogueRepository.GetCatalogueByIdAsync(id);
 
             if (catalogue == null)
                 throw new ArgumentException("Catalogue null or empty.", nameof(id));
@@ -35,7 +35,7 @@ namespace OneBeyondApi.Service
                 AddFine(returnedDate, catalogue.LoanEndDate.Value.Date, catalogue.OnLoanTo);
             }
 
-            return _catalogueRepository.CloseCatalogueLoan(id);
+            return await _catalogueRepository.CloseCatalogueLoanAsync(id);
 
 
         }
@@ -55,35 +55,35 @@ namespace OneBeyondApi.Service
                 Amount = fineAmount
             };
 
-            _fineRepository.AddFines(fine);
+            _fineRepository.AddFineAsync(fine);
 
         }
 
 
-        public List<BookStock> GetCatalogue()
+        public async Task<IEnumerable<BookStock>> GetCatalogueAsync()
         {
-            return _catalogueRepository.GetCatalogue();
+            return await _catalogueRepository.GetCatalogueAsync();
         }
 
         /// <summary>
         /// Retrieves the catalogue entry for a specific book based on its unique identifier.
         /// </summary>       
-        public BookStock? GetCatalogueById(Guid id)
+        public async Task<BookStock?> GetCatalogueByIdAsync(Guid id)
         {
-            return _catalogueRepository.GetCatalogueById(id);
+            return await _catalogueRepository.GetCatalogueByIdAsync(id);
         }
 
         /// <summary>
         /// Retrieves a list of books currently on loan.
         /// </summary>        
-        public List<BookStock> GetCatalogueOnLoan()
+        public async Task<IEnumerable<BookStock>> GetCatalogueOnLoanAsync()
         {
-            return _catalogueRepository.GetCatalogueOnLoan();
+            return await _catalogueRepository.GetCatalogueOnLoanAsync();
         }
 
-        public List<BookStock> SearchCatalogue(CatalogueSearch search)
+        public async Task<IEnumerable<BookStock>> SearchCatalogueAsync(CatalogueSearch search)
         {
-            return _catalogueRepository.SearchCatalogue(search);
+            return await _catalogueRepository.SearchCatalogueAsync(search);
         }
     }
 }

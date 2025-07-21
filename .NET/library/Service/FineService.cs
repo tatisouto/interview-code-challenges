@@ -1,4 +1,4 @@
-﻿using OneBeyondApi.DataAccess;
+﻿using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 using OneBeyondApi.Service.Interface;
 
@@ -14,19 +14,19 @@ namespace OneBeyondApi.Service
             _fineRepository = fineRepository;
         }
 
-        public Guid AddFines(Fine fine)
+        public async Task<Guid> AddFineAsync(Fine fine)
         {
-            return _fineRepository.AddFines(fine);
+            return await _fineRepository.AddFineAsync(fine);
         }
 
-        public List<Fine> GetFine()
+        public async Task<IEnumerable<Fine>> GetFineAsync()
         {
-            return _fineRepository.GetFine();
+            return await _fineRepository.GetFineAsync();
         }
 
-        public Fine? GetFineBorrowerById(Guid borrowerId)
+        public async Task<Fine?> GetFineBorrowerByIdAsync(Guid borrowerId)
         {
-            var result = _fineRepository.GetFineBorrowerById(borrowerId);
+            var result = await _fineRepository.GetFineBorrowerByIdAsync(borrowerId);
 
             if (result is null)
                 throw new InvalidOperationException($"Borrower  '{borrowerId}' not found.");
@@ -34,9 +34,9 @@ namespace OneBeyondApi.Service
             return result;
         }
 
-        public Fine? GetFineById(Guid id)
+        public async Task<Fine?> GetFineByIdAsync(Guid id)
         {
-            var result = _fineRepository.GetFineById(id);
+            var result = await _fineRepository.GetFineByIdAsync(id);
 
             if (result is null)
                 throw new InvalidOperationException($"Fine  '{id}' not found.");

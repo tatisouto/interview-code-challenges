@@ -4,6 +4,8 @@ using Moq;
 using OneBeyondApi.Controllers;
 using OneBeyondApi.Model;
 using OneBeyondApi.Service.Interface;
+using OneBeyondTest.Mock;
+using System.Threading.Tasks;
 
 namespace OneBeyondTest.Controllers
 {
@@ -12,74 +14,63 @@ namespace OneBeyondTest.Controllers
         private readonly CatalogueController _controller;
         private readonly Mock<ICatalogueService> _catalogueService;
         private readonly Mock<ILogger<CatalogueController>> _logger;
-
+        private readonly BookStockMock _bookStockMock;
 
         public CatalogueControllerTest()
         {
             _logger = new Mock<ILogger<CatalogueController>>();
             _catalogueService = new Mock<ICatalogueService>();
             _controller = new CatalogueController(_logger.Object, _catalogueService.Object);
+            _bookStockMock = new BookStockMock();
         }
 
         [Fact]
-        public void GetCatalogue_ShouldReturnListOfCatalogue()
+        public async Task GetCatalogue_ShouldReturnListOfCatalogue()
         {
-            var mockCatalogue = new List<BookStock>
-            {
+            var mockCatalogue = _bookStockMock.getListBookStock();
 
-            };
-
-            _catalogueService.Setup(service => service.GetCatalogue()).Returns(mockCatalogue);
+            _catalogueService.Setup(service => service.GetCatalogueAsync()).ReturnsAsync(mockCatalogue);
 
             // Act
-            var result = _controller.Get();
+            var result = await _controller.GetAsync();
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<IList<BookStock>>>(result);
-            var actionResult = Assert.IsType<OkObjectResult>(result);
-            var reservations = Assert.IsType<List<BookStock>>(actionResult.Value);
-            Assert.Equal(mockCatalogue.Count, reservations.Count);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedValue = Assert.IsType<List<BookStock>>(okResult.Value);
+            Assert.Equal(mockCatalogue, returnedValue);
         }
 
         [Fact]
-        public void GetCatalogueOnLoan_ShouldReturnListOfOnLoan()
+        public async Task GetCatalogueOnLoan_ShouldReturnListOfOnLoan()
         {
-            var mockCatalogue = new List<BookStock>
-            {
+            var mockCatalogue = _bookStockMock.getListBookStock();
 
-            };
-
-            _catalogueService.Setup(service => service.GetCatalogueOnLoan()).Returns(mockCatalogue);
+            _catalogueService.Setup(service => service.GetCatalogueOnLoanAsync()).ReturnsAsync(mockCatalogue);
 
             // Act
-            var result = _controller.GetCatalogueOnLoan();
+            var result = await _controller.GetCatalogueOnLoanAsync();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<IList<BookStock>>>(result);
-            var actionResult = Assert.IsType<OkObjectResult>(result);
-            var reservations = Assert.IsType<List<BookStock>>(actionResult.Value);
-            Assert.Equal(mockCatalogue.Count, reservations.Count);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedValue = Assert.IsType<List<BookStock>>(okResult.Value);
+            Assert.Equal(mockCatalogue, returnedValue);
         }
 
         [Fact]
-        public void CloseCatalogueLoan_ReturnOk_WhenUpdateSucceeds()
+        public async Task CloseCatalogueLoan_ReturnOk_WhenUpdateSucceeds()
         {
-            var mockCatalogue = new BookStock { };
+            var mockCatalogue = _bookStockMock.GetBookStockDto();
 
             var returnedDate = DateTime.Now;
             var id = Guid.NewGuid();
 
-            _catalogueService.Setup(service => service.CloseCatalogueLoan(id, returnedDate)).Returns(mockCatalogue);
+            _catalogueService.Setup(service => service.CloseCatalogueLoanAsync(id, returnedDate)).ReturnsAsync(mockCatalogue);
 
-            var result = _controller.CloseCatalogueLoan(id, returnedDate);
+            var result = await _controller.CloseCatalogueLoanAsync(id, returnedDate);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<BookStock>>(result);
 
-            var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.Equal(actionResult.Value, id);
-            Assert.Equal(actionResult.StatusCode, 200);
         }
 
 

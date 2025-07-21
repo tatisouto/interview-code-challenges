@@ -18,17 +18,17 @@ namespace OneBeyondApi.Controllers
         }
 
         [HttpGet]
-        [Route("GetCatalogue")]
-        public IList<BookStock> Get()
+        [Route("GetCatalogueAsync")]
+        public async Task<ActionResult> GetAsync()
         {
-            return _catalogueService.GetCatalogue();
+            return Ok(await _catalogueService.GetCatalogueAsync());
         }
 
         [HttpPost]
-        [Route("SearchCatalogue")]
-        public IList<BookStock> Post(CatalogueSearch search)
+        [Route("SearchCatalogueAsync")]
+        public async Task<ActionResult> PostAsync(CatalogueSearch search)
         {
-            return _catalogueService.SearchCatalogue(search);
+            return Ok(await _catalogueService.SearchCatalogueAsync(search));
         }
 
         /// <summary>
@@ -36,26 +36,10 @@ namespace OneBeyondApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetCatalogueOnLoan")]
-        public ActionResult<IList<BookStock>> GetCatalogueOnLoan()
+        [Route("GetCatalogueOnLoanAsync")]
+        public async Task<ActionResult> GetCatalogueOnLoanAsync()
         {
-            try
-            {
-                return Ok(_catalogueService.GetCatalogueOnLoan());
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation catalogue loan.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError(ex, "Error retrieving catalogue loans.");
-                return StatusCode(500, "An error occurrer");
-            }
-
-
+            return Ok(await _catalogueService.GetCatalogueOnLoanAsync());
         }
 
         /// <summary>
@@ -65,29 +49,13 @@ namespace OneBeyondApi.Controllers
         /// <param name="returnedDate"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("CloseCatalogueLoan/{id}/{returnedDate}")]
-        public ActionResult<BookStock> CloseCatalogueLoan(Guid id, DateTime returnedDate)
+        [Route("CloseCatalogueLoanAsync/{id}/{returnedDate}")]
+        public async Task<ActionResult> CloseCatalogueLoanAsync(Guid id, DateTime returnedDate)
         {
-            try
-            {
-                if (id == Guid.Empty || returnedDate == default)
-                {
-                    return BadRequest("Invalid input parameters.");
-                }
+            if (id == Guid.Empty || returnedDate == default)
+                return BadRequest("Invalid input parameters.");
 
-                return _catalogueService.CloseCatalogueLoan(id, returnedDate);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error loan.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error closing catalogue loan.");
-                return StatusCode(500, "An error occurrer");
-            }
-
+            return Ok(await _catalogueService.CloseCatalogueLoanAsync(id, returnedDate));
         }
     }
 }

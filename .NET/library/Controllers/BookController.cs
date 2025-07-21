@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
-using System.Collections;
+using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
 {
@@ -10,26 +9,26 @@ namespace OneBeyondApi.Controllers
     public class BookController : ControllerBase
     {
         private readonly ILogger<BookController> _logger;
-        private readonly IBookRepository _bookRepository;
+        private readonly IBookService _bookService;
 
-        public BookController(ILogger<BookController> logger, IBookRepository bookRepository)
+        public BookController(ILogger<BookController> logger, IBookService bookService)
         {
             _logger = logger;
-            _bookRepository = bookRepository;   
+            _bookService = bookService;
         }
 
         [HttpGet]
-        [Route("GetBooks")]
-        public IList<Book> Get()
+        [Route("GetBooksAsync")]
+        public async Task<ActionResult> GetBooksAsync()
         {
-            return _bookRepository.GetBooks();
+            return Ok(await _bookService.GetBooksAsync());
         }
 
         [HttpPost]
-        [Route("AddBook")]
-        public Guid Post(Book book)
+        [Route("AddBookAsync")]
+        public async Task<ActionResult> PostAsync(Book book)
         {
-            return _bookRepository.AddBook(book);
+            return Ok(await _bookService.AddBookAsync(book));
         }
     }
 }

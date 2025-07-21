@@ -1,68 +1,70 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OneBeyondApi.DataAccess.Context;
+using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 
-namespace OneBeyondApi.DataAccess
+namespace OneBeyondApi.DataAccess.Repository
 {
     public class CatalogueRepository : ICatalogueRepository
     {
         public CatalogueRepository()
         {
         }
-        public List<BookStock> GetCatalogue()
+        public async Task<IEnumerable<BookStock>> GetCatalogueAsync()
         {
             using (var context = new LibraryContext())
             {
-                var list = context.Catalogue
-                    .Include(x => x.Book)
-                    .ThenInclude(x => x.Author)
-                    .Include(x => x.OnLoanTo)
-                    .ToList();
-                return list;
+                return await context.Catalogue
+                     .Include(x => x.Book)
+                     .ThenInclude(x => x.Author)
+                     .Include(x => x.OnLoanTo)
+                     .ToListAsync();
+
             }
         }
 
-        public BookStock? GetCatalogueById(Guid id)
+        public async Task<BookStock?> GetCatalogueByIdAsync(Guid id)
         {
             using (var context = new LibraryContext())
             {
-                return context.Catalogue
+                return await context.Catalogue
                .Include(x => x.Book)
                .ThenInclude(x => x.Author)
-               .Include(x => x.OnLoanTo).FirstOrDefault(x => x.Id == id);
+               .Include(x => x.OnLoanTo).FirstOrDefaultAsync(x => x.Id == id);
             }
         }
 
 
-        public List<BookStock> GetCatalogueOnLoan()
+        public async Task<IEnumerable<BookStock>> GetCatalogueOnLoanAsync()
         {
             using (var context = new LibraryContext())
             {
-                return context.Catalogue
+                return await context.Catalogue
                    .Include(x => x.Book)
                    .ThenInclude(x => x.Author)
                    .Include(x => x.OnLoanTo)
-                        .Where(onloan => onloan.OnLoanTo != null).ToList();
+                        .Where(onloan => onloan.OnLoanTo != null).ToListAsync();
             }
         }
 
-        public BookStock? GetCatalogueByBookId(Guid bookId)
+        public async Task<BookStock?> GetCatalogueByBookIdAsync(Guid bookId)
         {
             using (var context = new LibraryContext())
             {
-                return context.Catalogue
+                return await context.Catalogue
                    .Include(x => x.Book)
                    .ThenInclude(x => x.Author)
                    .Include(x => x.OnLoanTo)
-                        .FirstOrDefault(x=>x.Book.Id == bookId);
+                        .FirstOrDefaultAsync(x => x.Book.Id == bookId);
             }
         }
 
 
-        public BookStock CloseCatalogueLoan(Guid id)
+        public async Task<BookStock> CloseCatalogueLoanAsync(Guid id)
         {
             using (var context = new LibraryContext())
             {
-                var book = GetCatalogueById(id);
+                var book = await GetCatalogueByIdAsync(id);
 
                 if (book == null)
                     return null;
@@ -72,17 +74,17 @@ namespace OneBeyondApi.DataAccess
 
                 context.Catalogue.Update(book);
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return book;
             }
         }
 
 
-        public List<BookStock> SearchCatalogue(CatalogueSearch search)
+        public async Task<IEnumerable<BookStock>> SearchCatalogueAsync(CatalogueSearch search)
         {
             using (var context = new LibraryContext())
             {
-                var list = context.Catalogue
+                var query = context.Catalogue
                     .Include(x => x.Book)
                     .ThenInclude(x => x.Author)
                     .Include(x => x.OnLoanTo)
@@ -92,15 +94,15 @@ namespace OneBeyondApi.DataAccess
                 {
                     if (!string.IsNullOrEmpty(search.Author))
                     {
-                        list = list.Where(x => x.Book.Author.Name.Contains(search.Author));
+                        query = query.Where(x => x.Book.Author.Name.Contains(search.Author));
                     }
                     if (!string.IsNullOrEmpty(search.BookName))
                     {
-                        list = list.Where(x => x.Book.Name.Contains(search.BookName));
+                        query = query.Where(x => x.Book.Name.Contains(search.BookName));
                     }
                 }
 
-                return list.ToList();
+                return await query.ToListAsync();
             }
         }
     }

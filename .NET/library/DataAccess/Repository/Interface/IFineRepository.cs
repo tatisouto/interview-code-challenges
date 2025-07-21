@@ -1,13 +1,12 @@
 ﻿using OneBeyondApi.Model;
 
-namespace OneBeyondApi.Service.Interface
+namespace OneBeyondApi.DataAccess.Repository.Interface
 {
-    public interface IFineService
+    public interface IFineRepository
     {
         Task<IEnumerable<Fine>> GetFineAsync();
         Task<Fine?> GetFineByIdAsync(Guid id);
         Task<Guid> AddFineAsync(Fine fine);
         Task<Fine?> GetFineBorrowerByIdAsync(Guid borrowerId);
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using OneBeyondApi.DataAccess;
+﻿using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 using OneBeyondApi.Model.Dto;
 using OneBeyondApi.Service.Interface;
@@ -22,19 +22,18 @@ namespace OneBeyondApi.Service
             _catalogueRepository = catalogueRepository;
         }
 
-
         /// <summary>
         /// Retrieves a list of all reservations.
         /// </summary> 
-        public List<Reservation> GetReservations()
+        public async Task<IEnumerable<Reservation>> GetReservationsAsync()
         {
-            return _reservationRepository.GetReservations().ToList();
+            return await _reservationRepository.GetReservationsAsync();
         }
 
         /// <summary>
         /// Reserves a book for a borrower, ensuring the book and borrower exist and are valid.
         /// </summary>      
-        public Guid ReserveBook(string bookName, string borrowerEmailAddress)
+        public async Task<Guid> ReserveBookAsync(string bookName, string borrowerEmailAddress)
         {
             if (string.IsNullOrWhiteSpace(bookName))
                 throw new ArgumentException("Book name cannot be null or empty.", nameof(bookName));
@@ -42,13 +41,13 @@ namespace OneBeyondApi.Service
             if (string.IsNullOrWhiteSpace(borrowerEmailAddress))
                 throw new ArgumentException("Borrower email address cannot be null or empty.", nameof(borrowerEmailAddress));
 
-            var book = _bookRepository.GetBookByName(bookName)
+            var book = await _bookRepository.GetBookByNameAsync(bookName)
                 ?? throw new InvalidOperationException($"Book '{bookName}' not found.");
 
-            var borrower = _borrowerRepository.GetBorrowerByEmailAddress(borrowerEmailAddress)
+            var borrower = await _borrowerRepository.GetBorrowerByEmailAddressAsync(borrowerEmailAddress)
                 ?? throw new InvalidOperationException($"Borrower with email '{borrowerEmailAddress}' not found.");
 
-            var getReserve = _reservationRepository.GetReservationsByBookId(book.Id);
+            var getReserve = await _reservationRepository.GetReservationsByBookIdAsync(book.Id);
             var existingReservation = getReserve.Any(x => x.Borrower.Id == borrower.Id);
 
             if (existingReservation)
@@ -61,18 +60,17 @@ namespace OneBeyondApi.Service
                 IsActive = true
             };
 
-            return _reservationRepository.AddReservation(reservation);
+            return await _reservationRepository.AddReservationAsync(reservation);
         }
 
-        public ReserveAvailableDto GetReserveAvailable(Guid bookId, Guid borrowerId)
+        public async Task<ReserveAvailableDto> GetReserveAvailableAsync(Guid bookId, Guid borrowerId)
         {
-            var catalogue = _catalogueRepository.GetCatalogueByBookId(bookId);
+            var catalogue = await _catalogueRepository.GetCatalogueByBookIdAsync(bookId);
 
             if (catalogue == null)
                 throw new InvalidOperationException($"Reserve '{bookId}' not found.");
 
-
-            var reservations = _reservationRepository.GetReservationsByBookId(bookId);
+            var reservations = await _reservationRepository.GetReservationsByBookIdAsync(bookId);
 
             var position = reservations
                     .OrderBy(r => r.ReservationDate)

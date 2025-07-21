@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OneBeyondApi.Model;
 
-namespace OneBeyondApi.DataAccess
+namespace OneBeyondApi.DataAccess.Context
 {
     public class LibraryContext : DbContext
     {

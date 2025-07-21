@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
-using System.Collections;
+using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
 {
@@ -10,26 +9,26 @@ namespace OneBeyondApi.Controllers
     public class AuthorController : ControllerBase
     {
         private readonly ILogger<AuthorController> _logger;
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IAuthorService _authorService;
 
-        public AuthorController(ILogger<AuthorController> logger, IAuthorRepository authorRepository)
+        public AuthorController(ILogger<AuthorController> logger, IAuthorService authorService)
         {
             _logger = logger;
-            _authorRepository = authorRepository;   
+            _authorService = authorService;
         }
 
         [HttpGet]
-        [Route("GetAuthors")]
-        public IList<Author> Get()
+        [Route("GetAuthorsAsync")]
+        public async Task<ActionResult> GetAsync()
         {
-            return _authorRepository.GetAuthors();
+            return Ok(await _authorService.GetAuthorsAsync());
         }
 
         [HttpPost]
-        [Route("AddAuthor")]
-        public Guid Post(Author author)
+        [Route("AddAuthorAsync")]
+        public async Task<ActionResult> PostAsync(Author author)
         {
-            return _authorRepository.AddAuthor(author);
+            return Ok(await _authorService.AddAuthorAsync(author));
         }
     }
 }

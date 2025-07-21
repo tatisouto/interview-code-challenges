@@ -1,40 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OneBeyondApi.DataAccess.Context;
+using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 
-namespace OneBeyondApi.DataAccess
+namespace OneBeyondApi.DataAccess.Repository
 {
     public class BookRepository : IBookRepository
     {
         public BookRepository()
         {
         }
-        public List<Book> GetBooks()
+        public async Task<IEnumerable<Book>> GetBooksAsync()
         {
             using (var context = new LibraryContext())
             {
-                var list = context.Books
-                    .ToList();
-                return list;
+                return await context.Books
+                    .ToListAsync();
             }
         }
 
 
-        public Book? GetBookByName(string bookName)
+        public async Task<Book?> GetBookByNameAsync(string bookName)
         {
             using (var context = new LibraryContext())
             {
-                return context.Books
+                return await context.Books
                     .Include(x => x.Author)
-                    .FirstOrDefault(x => x.Name.Contains(bookName));
+                    .FirstOrDefaultAsync(x => x.Name.Contains(bookName));
             }
         }
 
-        public Guid AddBook(Book book)
+        public async Task<Guid> AddBookAsync(Book book)
         {
             using (var context = new LibraryContext())
             {
                 context.Books.Add(book);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return book.Id;
             }
         }

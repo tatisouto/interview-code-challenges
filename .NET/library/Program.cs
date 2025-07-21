@@ -1,5 +1,7 @@
 using OneBeyondApi;
-using OneBeyondApi.DataAccess;
+using OneBeyondApi.DataAccess.Repository;
+using OneBeyondApi.DataAccess.Repository.Interface;
+using OneBeyondApi.Middleware;
 using OneBeyondApi.Service;
 using OneBeyondApi.Service.Interface;
 
@@ -14,6 +16,10 @@ builder.Services.AddScoped<IFineRepository, FineRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IFineRepository, FineRepository>();
 
+
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBorrowerService, BorrowerService>();
 builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IFineService, FineService>();
@@ -27,6 +33,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -34,6 +41,8 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 //}
+
+
 
 app.UseHttpsRedirection();
 

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using OneBeyondApi.DataAccess;
-using OneBeyondApi.Model;
-using OneBeyondApi.Service;
+﻿using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
@@ -21,47 +17,17 @@ namespace OneBeyondApi.Controllers
         }
 
         [HttpGet]
-        [Route("GetFine")]
-        public ActionResult<IList<Fine>> Get()
+        [Route("GetFineAsync")]
+        public async Task<ActionResult> Get()
         {
-            try
-            {
-                return Ok(_fineService.GetFine());
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error fines.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving fines.");
-                return StatusCode(500, "An error occurrer");
-
-            }
-
+            return Ok(await _fineService.GetFineAsync());
         }
 
         [HttpGet]
-        [Route("GetFineBorrowerById/{borrowerId}")]
-        public ActionResult<Fine> GetFineBorrowerById(Guid borrowerId)
+        [Route("GetFineBorrowerByIdAsync/{borrowerId}")]
+        public async Task<ActionResult> GetFineBorrowerByIdAsync(Guid borrowerId)
         {
-            try
-            {
-                return Ok(_fineService.GetFineBorrowerById(borrowerId));
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error fines.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving fines.");
-                return StatusCode(500, "An error occurrer");
-
-            }
-
+            return Ok(await _fineService.GetFineBorrowerByIdAsync(borrowerId));
         }
 
     }

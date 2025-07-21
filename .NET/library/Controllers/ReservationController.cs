@@ -1,11 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using OneBeyondApi.Model;
-using OneBeyondApi.Model.Dto;
-using OneBeyondApi.Service;
+﻿using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.Service.Interface;
-using System.Xml.Linq;
 
 namespace OneBeyondApi.Controllers
 {
@@ -23,52 +17,20 @@ namespace OneBeyondApi.Controllers
         }
 
         [HttpGet]
-        [Route("GetReservations")]
-        public ActionResult<IList<Reservation>> Get()
+        [Route("GetReservationsAsync")]
+        public async Task<ActionResult> GetAsync()
         {
-            try
-            {
-                return Ok(_reservationService.GetReservations());
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error while reserving book.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving reservations.");
-                return StatusCode(500, "An error occurrer");
-            }
-
+            return Ok(await _reservationService.GetReservationsAsync());
         }
 
-
         [HttpPost]
-        [Route("ReserveBook")]
-        public ActionResult<Guid> Post(string bookName, string email)
+        [Route("ReserveBookAsync")]
+        public async Task<ActionResult> PostAsync(string bookName, string email)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(bookName) || string.IsNullOrWhiteSpace(email))
-                {
-                    return BadRequest("Invalid input parameters.");
-                }
+            if (string.IsNullOrWhiteSpace(bookName) || string.IsNullOrWhiteSpace(email))
+                return BadRequest("Invalid input parameters.");
 
-                return Ok(_reservationService.ReserveBook(bookName, email));
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error while reserving book.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error reserve book.");
-                return StatusCode(500, "An error occurrer");
-            }
-
-
+            return Ok(await _reservationService.ReserveBookAsync(bookName, email));
         }
 
         /// <summary>
@@ -78,28 +40,10 @@ namespace OneBeyondApi.Controllers
         /// <param name="borrowerId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetReserveAvailable/{bookId}/{borrowerId}")]
-        public ActionResult<ReserveAvailableDto> GetReserveAvailable(Guid bookId, Guid borrowerId)
+        [Route("GetReserveAvailableAsync/{bookId}/{borrowerId}")]
+        public async Task<ActionResult> GetReserveAvailableAsync(Guid bookId, Guid borrowerId)
         {
-            try
-            {
-                if (bookId == Guid.Empty || borrowerId == Guid.Empty)
-                    return BadRequest("Invalid input parameters.");
-
-                return Ok(_reservationService.GetReserveAvailable(bookId, borrowerId));
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Validation error while reserving book.");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrive reserve.");
-                return StatusCode(500, "An error occurrer");
-            }
-
-
+            return Ok(await _reservationService.GetReserveAvailableAsync(bookId, borrowerId));
         }
 
     }

@@ -1,4 +1,4 @@
-﻿using OneBeyondApi.DataAccess;
+﻿using OneBeyondApi.DataAccess.Context;
 using OneBeyondApi.Model;
 
 namespace OneBeyondApi

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
-using System.Collections;
+using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
 {
@@ -10,26 +9,26 @@ namespace OneBeyondApi.Controllers
     public class BorrowerController : ControllerBase
     {
         private readonly ILogger<BorrowerController> _logger;
-        private readonly IBorrowerRepository _borrowerRepository;
+        private readonly IBorrowerService _borrowerService;
 
-        public BorrowerController(ILogger<BorrowerController> logger, IBorrowerRepository borrowerRepository)
+        public BorrowerController(ILogger<BorrowerController> logger, IBorrowerService borrowerService)
         {
             _logger = logger;
-            _borrowerRepository = borrowerRepository;   
+            _borrowerService = borrowerService;
         }
 
         [HttpGet]
-        [Route("GetBorrowers")]
-        public IList<Borrower> Get()
+        [Route("GetBorrowersAsync")]
+        public async Task<ActionResult> GetAsync()
         {
-            return _borrowerRepository.GetBorrowers();
+            return Ok(await _borrowerService.GetBorrowersAsync());
         }
 
         [HttpPost]
-        [Route("AddBorrower")]
-        public Guid Post(Borrower borrower)
+        [Route("AddBorrowerAsync")]
+        public async Task<ActionResult> PostAsync(Borrower borrower)
         {
-            return _borrowerRepository.AddBorrower(borrower);
+            return Ok(await _borrowerService.AddBorrowerAsync(borrower));
         }
     }
 }
