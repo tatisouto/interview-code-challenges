@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using OneBeyondApi;
 using OneBeyondApi.DataAccess.Repository;
 using OneBeyondApi.DataAccess.Repository.Interface;
@@ -6,6 +7,7 @@ using OneBeyondApi.Service;
 using OneBeyondApi.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -23,6 +25,8 @@ builder.Services.AddScoped<IBorrowerService, BorrowerService>();
 builder.Services.AddScoped<ICatalogueService, CatalogueService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IFineService, FineService>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Seed test data into memory DB
 SeedData.SetInitialData();

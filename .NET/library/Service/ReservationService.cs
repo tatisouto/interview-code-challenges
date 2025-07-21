@@ -63,7 +63,7 @@ namespace OneBeyondApi.Service
             return await _reservationRepository.AddReservationAsync(reservation);
         }
 
-        public async Task<ReserveAvailableDto> GetReserveAvailableAsync(Guid bookId, Guid borrowerId)
+        public async Task<ReserveAvailable> GetReserveAvailableAsync(Guid bookId, Guid borrowerId)
         {
             var catalogue = await _catalogueRepository.GetCatalogueByBookIdAsync(bookId);
 
@@ -80,7 +80,7 @@ namespace OneBeyondApi.Service
 
             if (catalogue.OnLoanTo == null && position == 0)
             {
-                return new ReserveAvailableDto
+                return new ReserveAvailable
                 {
                     IsAvailableNow = true,
                     EstimatedDate = DateTime.Now.Date
@@ -93,7 +93,7 @@ namespace OneBeyondApi.Service
                 DateTime estimatedDate = (catalogue.LoanEndDate?.Date ?? DateTime.Now.Date)
                                          .AddDays(peopleAhead * AVG_LOAN_DAYS);
 
-                return new ReserveAvailableDto
+                return new ReserveAvailable
                 {
                     IsAvailableNow = false,
                     EstimatedDate = estimatedDate

@@ -1,6 +1,7 @@
 ﻿
 using AutoFixture;
 using OneBeyondApi.Model;
+using OneBeyondApi.Model.Dto;
 
 namespace OneBeyondTest.Mock
 {
@@ -12,14 +13,14 @@ namespace OneBeyondTest.Mock
             _fixture = new Fixture();
 
         }
-        public BookStock GetBookStockDto()
+        public BookStockDto GetBookStockDto()
         {
-            return _fixture.Build<BookStock>().Create();
+            return _fixture.Build<BookStockDto>().Create();
         }
 
-        public List<BookStock> getListBookStock()
+        public List<BookStockDto> getListBookStock()
         {
-            return _fixture.Build<BookStock>().CreateMany(3).ToList();
+            return _fixture.Build<BookStockDto>().CreateMany(3).ToList();
         }
     }
 }

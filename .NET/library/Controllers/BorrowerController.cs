@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.Model;
+using OneBeyondApi.Model.Dto;
 using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
@@ -10,25 +12,35 @@ namespace OneBeyondApi.Controllers
     {
         private readonly ILogger<BorrowerController> _logger;
         private readonly IBorrowerService _borrowerService;
+        private readonly IMapper _mapper;
 
-        public BorrowerController(ILogger<BorrowerController> logger, IBorrowerService borrowerService)
+        public BorrowerController(ILogger<BorrowerController> logger, IBorrowerService borrowerService, IMapper mapper)
         {
             _logger = logger;
             _borrowerService = borrowerService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("GetBorrowersAsync")]
         public async Task<ActionResult> GetAsync()
         {
-            return Ok(await _borrowerService.GetBorrowersAsync());
+            var result = await _borrowerService.GetBorrowersAsync();
+
+            var resultsDto = _mapper.Map<IEnumerable<BorrowerDto>>(result);
+
+            return Ok(resultsDto);
         }
 
         [HttpPost]
         [Route("AddBorrowerAsync")]
-        public async Task<ActionResult> PostAsync(Borrower borrower)
+        public async Task<ActionResult> PostAsync([FromBody] BorrowerDto requestBorrower)
         {
-            return Ok(await _borrowerService.AddBorrowerAsync(borrower));
+            var request = _mapper.Map<Borrower>(requestBorrower);
+
+            var result = await _borrowerService.AddBorrowerAsync(request);
+
+            return Ok(result);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace OneBeyondApi.Service.Interface
     {
         Task<IEnumerable<Reservation>> GetReservationsAsync();
         Task<Guid> ReserveBookAsync(string bookName, string borrowerEmailAddress);
-        Task<ReserveAvailableDto> GetReserveAvailableAsync(Guid bookId, Guid borrowerId);
+        Task<ReserveAvailable> GetReserveAvailableAsync(Guid bookId, Guid borrowerId);
     }
 
 

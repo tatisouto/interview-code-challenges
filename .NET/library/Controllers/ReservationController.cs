@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using OneBeyondApi.Model.Dto;
 using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
@@ -9,28 +11,34 @@ namespace OneBeyondApi.Controllers
     {
         private readonly ILogger<ReservationController> _logger;
         private readonly IReservationService _reservationService;
+        private readonly IMapper _mapper;
 
-        public ReservationController(ILogger<ReservationController> logger, IReservationService reservationService)
+        public ReservationController(ILogger<ReservationController> logger, IReservationService reservationService, IMapper mapper)
         {
             _logger = logger;
             _reservationService = reservationService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("GetReservationsAsync")]
         public async Task<ActionResult> GetAsync()
         {
-            return Ok(await _reservationService.GetReservationsAsync());
+            var result = await _reservationService.GetReservationsAsync();
+
+            var reservationDto = _mapper.Map<IEnumerable<ReservationDto>>(result);
+
+            return Ok(reservationDto);
         }
 
         [HttpPost]
         [Route("ReserveBookAsync")]
-        public async Task<ActionResult> PostAsync(string bookName, string email)
+        public async Task<ActionResult> PostAsync([FromBody] ReserveBookRequestDto reserveBookDto)
         {
-            if (string.IsNullOrWhiteSpace(bookName) || string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(reserveBookDto.BookName) || string.IsNullOrWhiteSpace(reserveBookDto.Email))
                 return BadRequest("Invalid input parameters.");
 
-            return Ok(await _reservationService.ReserveBookAsync(bookName, email));
+            return Ok(await _reservationService.ReserveBookAsync(reserveBookDto.BookName, reserveBookDto.Email));
         }
 
         /// <summary>
@@ -43,7 +51,11 @@ namespace OneBeyondApi.Controllers
         [Route("GetReserveAvailableAsync/{bookId}/{borrowerId}")]
         public async Task<ActionResult> GetReserveAvailableAsync(Guid bookId, Guid borrowerId)
         {
-            return Ok(await _reservationService.GetReserveAvailableAsync(bookId, borrowerId));
+            var result = await _reservationService.GetReserveAvailableAsync(bookId, borrowerId);
+
+            var reserveAvailableDto = _mapper.Map<ReserveAvailableDto>(result);
+
+            return Ok(reserveAvailableDto);
         }
 
     }

@@ -1,5 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.Model;
+using OneBeyondApi.Model.Dto;
+using OneBeyondApi.Service;
 using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
@@ -10,25 +13,35 @@ namespace OneBeyondApi.Controllers
     {
         private readonly ILogger<BookController> _logger;
         private readonly IBookService _bookService;
+        private readonly IMapper _mapper;
 
-        public BookController(ILogger<BookController> logger, IBookService bookService)
+        public BookController(ILogger<BookController> logger, IBookService bookService, IMapper mapper)
         {
             _logger = logger;
             _bookService = bookService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("GetBooksAsync")]
         public async Task<ActionResult> GetBooksAsync()
         {
-            return Ok(await _bookService.GetBooksAsync());
+            var result = await _bookService.GetBooksAsync();
+
+            var resultsDto = _mapper.Map<IEnumerable<BookDto>>(result);
+
+            return Ok(resultsDto);
         }
 
         [HttpPost]
         [Route("AddBookAsync")]
-        public async Task<ActionResult> PostAsync(Book book)
+        public async Task<ActionResult> PostAsync([FromBody] BookDto requestBook)
         {
-            return Ok(await _bookService.AddBookAsync(book));
+            var request = _mapper.Map<Book>(requestBook);
+
+            var result = await _bookService.AddBookAsync(request);
+
+            return Ok(result);
         }
     }
 }

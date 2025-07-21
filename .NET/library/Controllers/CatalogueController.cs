@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.Model;
+using OneBeyondApi.Model.Dto;
 using OneBeyondApi.Service.Interface;
 
 namespace OneBeyondApi.Controllers
@@ -10,25 +12,39 @@ namespace OneBeyondApi.Controllers
     {
         private readonly ILogger<CatalogueController> _logger;
         private readonly ICatalogueService _catalogueService;
+        private readonly IMapper _mapper;
 
-        public CatalogueController(ILogger<CatalogueController> logger, ICatalogueService catalogueService)
+        public CatalogueController(ILogger<CatalogueController> logger, ICatalogueService catalogueService, IMapper mapper)
         {
             _logger = logger;
             _catalogueService = catalogueService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("GetCatalogueAsync")]
         public async Task<ActionResult> GetAsync()
         {
-            return Ok(await _catalogueService.GetCatalogueAsync());
+            var results = await _catalogueService.GetCatalogueAsync();
+
+            var resultsDto = _mapper.Map<IEnumerable<BookStockDto>>(results);
+
+            return Ok(resultsDto);
         }
 
         [HttpPost]
         [Route("SearchCatalogueAsync")]
-        public async Task<ActionResult> PostAsync(CatalogueSearch search)
+        public async Task<ActionResult> PostAsync([FromBody] CatalogueSearchRequestDto requestSearch)
         {
-            return Ok(await _catalogueService.SearchCatalogueAsync(search));
+            var request = _mapper.Map<CatalogueSearch>(requestSearch);
+
+            var results = await _catalogueService.SearchCatalogueAsync(request);
+
+            var resultsDto = _mapper.Map<IEnumerable<CatalogueSearchRequestDto>>(results);
+
+            return Ok(resultsDto);
+
+
         }
 
         /// <summary>
@@ -39,7 +55,11 @@ namespace OneBeyondApi.Controllers
         [Route("GetCatalogueOnLoanAsync")]
         public async Task<ActionResult> GetCatalogueOnLoanAsync()
         {
-            return Ok(await _catalogueService.GetCatalogueOnLoanAsync());
+            var results = await _catalogueService.GetCatalogueOnLoanAsync();
+
+            var resultsDto = _mapper.Map<IEnumerable<BookStockDto>>(results);
+
+            return Ok(resultsDto);
         }
 
         /// <summary>
@@ -55,7 +75,11 @@ namespace OneBeyondApi.Controllers
             if (id == Guid.Empty || returnedDate == default)
                 return BadRequest("Invalid input parameters.");
 
-            return Ok(await _catalogueService.CloseCatalogueLoanAsync(id, returnedDate));
+            var results = await _catalogueService.CloseCatalogueLoanAsync(id, returnedDate);
+
+            var resultsDto = _mapper.Map<BookStockDto>(results);
+
+            return Ok(resultsDto);
         }
     }
 }

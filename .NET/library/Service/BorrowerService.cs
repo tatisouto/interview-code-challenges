@@ -1,7 +1,6 @@
 ﻿using OneBeyondApi.DataAccess.Repository.Interface;
 using OneBeyondApi.Model;
 using OneBeyondApi.Service.Interface;
-using System.Net.Mail;
 
 namespace OneBeyondApi.Service
 {
